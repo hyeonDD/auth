@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  register_server:
+    build: ./register_server
+    ports:
+      - "8000:8000"
+    volumes:
+      - register_app_log:/var/log
+    develop:
+        watch:
+          - action: sync+restart
+            path: ./register_server
+            target: /app
+            ignore:
+            - README.md
+
+volumes:
+  register_app_log:
