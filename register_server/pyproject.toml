@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "register_app"
+version = "0.0.1"
+description = "회원가입 서버"
+authors = ["hyeon <dev.dc.hyeon@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.110.1"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+
+[tool.poetry.scripts]
+start_server = 'register_app.main:start'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
