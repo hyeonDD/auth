@@ -1,6 +1,36 @@
 version: '3.8'
 services:
+  user_db:
+    container_name: user_db
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    volumes:
+      - user_db_log:/var/lib/mysql
+    env_file:
+      - .env.user.db
+  session_db:
+    container_name: session_db
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    volumes:
+      - session_db_log:/var/lib/mysql
+    env_file:
+      - .env.session.db
+  redis_db:
+    container_name: redis_db
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - redis_db_log:/data
+      - .redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - TZ=Asia/Seoul
   register_server:
+    container_name: register_server
     build: ./register_server
     ports:
       - "8000:8000"
@@ -16,3 +46,6 @@ services:
 
 volumes:
   register_app_log:
+  user_db_log:
+  session_db_log:
+  redis_db_log:
