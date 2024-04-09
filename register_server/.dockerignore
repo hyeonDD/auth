@@ -1,0 +1,2 @@
+.dockerignore
+register_app/.env
