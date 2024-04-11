@@ -1,27 +1,22 @@
-import logging
 import uvicorn
 from fastapi import FastAPI
+
+from register_app.api.router import api_router
+from register_app.core.config import settings
 
 app = FastAPI()
 
 
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s:%(message)s',
-    level=logging.INFO,
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-)
-
-
 @app.get("/")
 async def root():
-    logging.warning('WARNING TEST!!')
-    logging.info('INFO TEST')
     return {"message": "This is register server!!"}
 
 
 def start():
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
+
+app.include_router(api_router, prefix=settings.PREFIX_URL)
 
 if __name__ == "__main__":
     start()
