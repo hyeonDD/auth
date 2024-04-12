@@ -14,3 +14,4 @@ class UserCreate(UserBase):
     유저 등록
     """
     nickname: str
+    permission: str = "user"
