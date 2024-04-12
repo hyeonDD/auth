@@ -1,7 +1,7 @@
-from typing import Any
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from register_app.core.config import settings
 from register_app.api import mysql_deps
 import register_app.crud.mysql as mysql_crud
 import register_app.schemas.mysql as schemas
@@ -12,21 +12,28 @@ router = APIRouter()
 @router.post("/", status_code=201)
 async def create_user(
     *,
-    db: AsyncSession = Depends(mysql_deps.get_db),
+    superuser_header: str = Header(None),
+    mysql_db: AsyncSession = Depends(mysql_deps.get_mysql_db),
     user_in: schemas.UserCreate,
-) -> Any:
+) -> dict:
     """
     새로운 유저 만드는 기능
     """
+    print(superuser_header)
+    if superuser_header != settings.SUPERUSER_HEADER:
+        raise HTTPException(status_code=401, detail={
+            "error": "Unauthorized user",
+            "message": "You do not have permission",
+        })
 
-    is_exist_user = await mysql_crud.is_exist_user(db, email=user_in.email, nickname=user_in.nickname)
-    print(is_exist_user)
+    is_exist_user = await mysql_crud.is_exist_user(mysql_db, email=user_in.email, nickname=user_in.nickname)
+
     if is_exist_user:
         raise HTTPException(status_code=409, detail={
             "error": "User already exists",
             "message": "The user with the provided nickname or email already exists."
         })
 
-    await mysql_crud.create_user(db, obj_in=user_in)
+    result_mysql = await mysql_crud.create_user(mysql_db, obj_in=user_in)
 
     return {"message": "User Create Successful"}
