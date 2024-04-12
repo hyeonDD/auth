@@ -8,4 +8,4 @@ engine = create_async_engine(settings.MYSQL_URL, echo=True)
 
 # expire_on_commit bool 값으로 커밋후 객체 만료 설정 가능
 mysql_session_factory = async_sessionmaker(
-    engine, expire_on_commit=True, class_=AsyncSession)
+    engine, expire_on_commit=False, class_=AsyncSession)
