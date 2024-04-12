@@ -16,6 +16,7 @@ passlib = "^1.7.4"
 bcrypt = "4.0.1"
 pydantic = {extras = ["email"], version = "^2.6.4"}
 cryptography = "^42.0.5"
+redis = "^5.0.3"
 
 [tool.poetry.scripts]
 start_server = 'register_app.main:start'
