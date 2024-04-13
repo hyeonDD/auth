@@ -9,7 +9,7 @@ RUN pip install poetry==1.8.2
 COPY poetry.lock pyproject.toml /app/
 WORKDIR /app
 
-RUN poetry install
+RUN poetry install --without test
 
 COPY ./register_app/ /app/register_app/
 
