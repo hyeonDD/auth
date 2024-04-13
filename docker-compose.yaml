@@ -3,39 +3,47 @@ services:
   user_db:
     container_name: user_db
     image: mysql:latest
+    networks:
+      - auth_network
     ports:
       - "3306:3306"
     volumes:
-      - user_db_log:/var/lib/mysql
+      - auth_user_db_log:/var/lib/mysql
     env_file:
       - .env.user.db
   session_db:
     container_name: session_db
     image: mysql:latest
+    networks:
+      - auth_network
     ports:
       - "3307:3306"
     volumes:
-      - session_db_log:/var/lib/mysql
+      - auth_session_db_log:/var/lib/mysql
     env_file:
       - .env.session.db
   redis_db:
     container_name: redis_db
     image: redis:alpine
+    networks:
+      - auth_network
     ports:
       - "6379:6379"
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - redis_db_log:/data
+      - auth_redis_db_log:/data
       - .redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - TZ=Asia/Seoul
   register_server:
     container_name: register_server
     build: ./register_server
+    networks:
+      - auth_network
     ports:
       - "8000:8000"
     volumes:
-      - register_app_log:/var/log
+      - auth_register_app_log:/var/log
     env_file:
       - ./register_server/register_app/.env
     develop:
@@ -47,7 +55,15 @@ services:
             - README.md
 
 volumes:
-  register_app_log:
-  user_db_log:
-  session_db_log:
-  redis_db_log:
+  auth_register_app_log:
+    external: true
+  auth_user_db_log:
+    external: true
+  auth_session_db_log:
+    external: true
+  auth_redis_db_log:
+    external: true
+
+networks:
+  auth_network:
+    external: true
