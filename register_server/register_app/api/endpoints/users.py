@@ -6,6 +6,7 @@ from register_app.api import mysql_deps
 import register_app.crud.mysql as mysql_crud
 import register_app.schemas.mysql as schemas
 
+from register_app.schemas.redis import RedisUser
 import register_app.crud.redis as redis_crud
 from register_app.api import redis_deps
 
@@ -39,7 +40,9 @@ async def create_user(
         })
 
     result_mysql = await mysql_crud.create_user(mysql_db, obj_in=user_in)
+    redis_value = RedisUser(email=result_mysql.email, nickname=result_mysql.nickname,
+                            password=result_mysql.password, permission=result_mysql.permission)
 
-    await redis_crud.create_cache(redis_db, key=result_mysql.email, value=str(result_mysql.id))
+    await redis_crud.create_cache(redis_db, key=result_mysql.email, value=redis_value)
 
     return {"message": "User Create Successful"}

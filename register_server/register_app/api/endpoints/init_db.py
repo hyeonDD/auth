@@ -8,6 +8,7 @@ from register_app.models.mysql.user import User
 from register_app.core.security import get_password_hash
 from register_app.core.config import settings
 from register_app.crud.redis import create_cache
+from register_app.schemas.redis import RedisUser
 
 router = APIRouter()
 
@@ -19,8 +20,10 @@ async def create_tables() -> None:
         await conn.execute(insert(User).values(nickname='superuser', email='superuser@example.com', password=get_password_hash('1'), permission='superuser'))
         result = await conn.execute(select(User).filter(User.email == 'superuser@example.com'))
         result = result.first()
+    redis_value = RedisUser(email=result.email, nickname=result.nickname,
+                            password=result.password, permission=result.permission)
     redis_client = redis.Redis.from_url(settings.REDIS_URL)
-    await create_cache(redis_client, key=result.email, value=result.id)
+    await create_cache(redis_client, key=result.email, value=redis_value)
     return {"message": "User DB Table and Colum, Redis Cache Create Successful"}
 
 
