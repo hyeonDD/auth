@@ -53,6 +53,24 @@ services:
             target: /app
             ignore:
             - README.md
+  auth_server:
+    container_name: auth_server
+    build: ./auth_server
+    networks:
+      - auth_network
+    ports:
+      - "8002:8000"
+    volumes:
+      - auth_app_log:/var/log
+    env_file:
+      - ./auth_server/auth_app/.env
+    develop:
+        watch:
+          - action: sync+restart
+            path: ./auth_server
+            target: /app
+            ignore:
+            - README.md
 
 volumes:
   auth_register_app_log:
@@ -62,6 +80,8 @@ volumes:
   auth_session_db_log:
     external: true
   auth_redis_db_log:
+    external: true
+  auth_app_log:
     external: true
 
 networks:
