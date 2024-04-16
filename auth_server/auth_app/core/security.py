@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from jose import JWTError, jwt
+from jose import jwt
 
 from auth_app.core.config import settings
 
@@ -21,13 +21,14 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict, expire_minutes: int) -> str:
+def create_access_token(data: dict, expire_minutes: timedelta) -> str:
     """ 
     JWT 토큰 생성 후 반환
     """
+
     to_encode = data.copy()
 
-    expire = datetime.now() + timedelta(minutes=expire_minutes)
+    expire = datetime.now(timezone.utc) + expire_minutes
     to_encode.update({"exp": expire})
 
     encoded_jwt = jwt.encode(
