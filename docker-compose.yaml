@@ -11,17 +11,17 @@ services:
       - auth_user_db_log:/var/lib/mysql
     env_file:
       - .env.user.db
-  session_db:
-    container_name: session_db
+  blog_db:
+    container_name: blog_db
     image: mysql:latest
     networks:
       - auth_network
     ports:
       - "3307:3306"
     volumes:
-      - auth_session_db_log:/var/lib/mysql
+      - auth_blog_db_log:/var/lib/mysql
     env_file:
-      - .env.session.db
+      - .env.blog.db
   redis_db:
     container_name: redis_db
     image: redis:alpine
@@ -71,17 +71,37 @@ services:
             target: /app
             ignore:
             - README.md
+  blog_server:
+    container_name: blog_server
+    build: ./blog_server
+    networks:
+      - auth_network
+    ports:
+      - "8004:8000"
+    volumes:
+      - auth_blog_app_log:/var/log
+    env_file:
+      - ./blog_server/blog_app/.env
+    develop:
+        watch:
+          - action: sync+restart
+            path: ./blog_server
+            target: /app
+            ignore:
+            - README.md
 
 volumes:
   auth_register_app_log:
     external: true
   auth_user_db_log:
     external: true
-  auth_session_db_log:
+  auth_blog_db_log:
     external: true
   auth_redis_db_log:
     external: true
   auth_app_log:
+    external: true
+  auth_blog_app_log:
     external: true
 
 networks:
