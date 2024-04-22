@@ -1,0 +1,2 @@
+.dockerignore
+auth_app/.env
