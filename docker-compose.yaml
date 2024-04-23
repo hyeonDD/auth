@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - auth_network
+    depends_on:
+      - auth_server
+      - register_server
+      - blog_server
   user_db:
     container_name: user_db
     image: mysql:latest
