@@ -4,10 +4,11 @@ from fastapi import FastAPI
 from register_app.api.router import api_router
 from register_app.core.config import settings
 
-app = FastAPI()
+app = FastAPI(openapi_url=f'{
+              settings.PREFIX_URL}/openapi.json', docs_url=f'{settings.PREFIX_URL}/docs')
 
 
-@app.get("/")
+@app.get(f"{settings.PREFIX_URL}/")
 async def root():
     return {"message": "This is register server!!"}
 

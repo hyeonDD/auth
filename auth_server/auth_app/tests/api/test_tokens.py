@@ -1,5 +1,4 @@
 import pytest
-from random import randint
 from httpx import AsyncClient
 
 from auth_app.main import app
@@ -20,7 +19,7 @@ wrong_password_user = {
     "password": "123"
 }
 
-base_url = "http://localhost:8002"
+base_url = f"http://localhost{settings.PREFIX_URL}"
 
 
 @pytest.mark.asyncio
@@ -36,7 +35,7 @@ async def test_check_without_token():
     """
     토큰 없이 토큰을 확인
     """
-    async with AsyncClient(app=app, base_url=f"{base_url}{settings.PREFIX_URL}") as ac:
+    async with AsyncClient(app=app, base_url=f"{base_url}") as ac:
         response = await ac.get("/login/check")
     assert response.status_code == 400
     assert response.json() == {
@@ -57,7 +56,7 @@ async def test_wrong_login():
         }
     }
 
-    async with AsyncClient(app=app, base_url=f"{base_url}{settings.PREFIX_URL}") as ac:
+    async with AsyncClient(app=app, base_url=f"{base_url}") as ac:
         # case 1 없는 사용자 로그인
         response = await ac.post("/login/access-token", json=wrong_email_user)
         assert response.status_code == 400
@@ -84,7 +83,7 @@ async def test_with_fake_token():
         "detail": "Could not validate credentials"
     }
 
-    async with AsyncClient(app=app, base_url=f"{base_url}{settings.PREFIX_URL}") as ac:
+    async with AsyncClient(app=app, base_url=f"{base_url}") as ac:
         # 1. 로그인 성공
         response = await ac.post("/login/access-token", json=origin_user)
         assert response.status_code == 200
@@ -115,7 +114,7 @@ async def test_with_sccuess_token():
         "message": "Sucess Validate Token"
     }
 
-    async with AsyncClient(app=app, base_url=f"{base_url}{settings.PREFIX_URL}") as ac:
+    async with AsyncClient(app=app, base_url=f"{base_url}") as ac:
         # 1. 로그인 성공
         response = await ac.post("/login/access-token", json=origin_user)
         assert response.status_code == 200
