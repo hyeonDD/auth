@@ -8,7 +8,6 @@ class Post(Base):
     id = Column(String(36), default=lambda: uuid4(),
                 primary_key=True)
     email = Column(String(255), index=True, nullable=False)
-    nickname = Column(String(20), nullable=False)
     title = Column(String(50), nullable=False)
     description = Column(String(500), nullable=False)
 
