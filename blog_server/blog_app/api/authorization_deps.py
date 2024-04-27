@@ -16,7 +16,7 @@ def exist_access_token(request: Request) -> str:
     return base64_payload
 
 
-def decode_payload(request: Request) -> token_schemas.Payload:
+def get_user(request: Request) -> token_schemas.Payload:
     # 토큰있는지 확인
     base64_payload = exist_access_token(request)
     # superuser 확인
@@ -31,7 +31,7 @@ def is_superuser(request: Request) -> None:
     """
     superuser인지 확인
     """
-    payload = decode_payload(request)
+    payload = get_user(request)
     if payload.permission != 'superuser':
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="The user doesn't have enough privileges")
